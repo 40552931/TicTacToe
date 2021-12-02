@@ -1,9 +1,21 @@
 #include "Client.hpp"
 #include <iostream>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <fstream>
+#include <iomanip>
+#include <string>
+#include <sstream>
+
+#include "Message.hpp"
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/bind/bind.hpp>
 
 using namespace std;
-
-
 
 int main() {
 	Client client;
@@ -11,15 +23,21 @@ int main() {
 		cout << "[*] Message from server: " << message << endl;
 	};
 	client.Connect("127.0.0.1", 8888, [&] {
-		cout << "[*] Connected to server successfully" << endl;
-		client.Send("Hello server!!!!!!!!!!");
+		cout << "[*] Connected to server successfully \n" << endl;
 	});
+   
 
 	string input;
     getline(cin, input);
     while (input != "exit")
     {
-        client.Send(input);
+    	// Create new Message object with input
+    	const Message msg(input);
+    	std::stringstream messageStream;
+    	boost::archive::text_oarchive archive(messageStream);
+    	archive << msg;
+    	string outboundData = messageStream.str();
+    	client.Send(outboundData);
         getline(cin, input);
     }
 

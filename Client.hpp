@@ -23,10 +23,10 @@ public:
 		memset(&hints, 0, sizeof(hints));
 		hints.ai_family = AF_INET;
 		hints.ai_socktype = SOCK_STREAM;
-		struct *result, *rp;
+		struct addrinfo *result, *rp;
 		int status;
 		// get info about server
-		status = getaddrinfo(host.c_str(), NULL, &hints, &result)
+		status = getaddrinfo(host.c_str(), NULL, &hints, &result);
 		for(rp = result; rp != NULL; rp=rp->ai_next) {
 			// if item in result is ipv4 (server)
 			if(rp->ai_family == AF_INET) {
@@ -112,5 +112,4 @@ private:
 		// set socket timeout
 		setsockopt(this->sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv));
 	}
-
 };

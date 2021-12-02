@@ -4,7 +4,6 @@
 #include <thread>
 
 using namespace std;
-
 // Inherit everything from basic socket, bcos server is just a socket
 class Server : public BasicSocket {
 public:

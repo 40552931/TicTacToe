@@ -1,5 +1,13 @@
 #include "Server.hpp"
 #include <iostream>
+#include "Message.hpp"
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/bind/bind.hpp>
+#include <string>
+#include <sstream>
+#include <vector>
+
 
 using namespace std;
 
@@ -8,7 +16,11 @@ int main() {
 	server.uponNewCon = [&](Client *client) {
 		cout << "[!] New client connected: [" << client->remoteAddress() << "]" << endl;
 		client->onMessageReceived = [client](string message) {
-			cout << "[*] [" << client->remoteAddress() << "]:" << client->remotePort() << " => " << message << endl;
+			istringstream ss(message);
+			Message receivedMessage;
+			boost::archive::text_iarchive ia(ss);
+			ia >> receivedMessage;
+			cout << "[*] [" << client->remoteAddress() << "]:" << client->remotePort() << " => " << receivedMessage.contents << endl;
 			client->Send("OK!");
 		};
 		client->onSocketClosed = [client](int errCode = 1) {
