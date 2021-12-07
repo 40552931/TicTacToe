@@ -10,6 +10,8 @@ class GameController {
 public:
 	void beginGame();
 	int getPlayerMarkerChoice();
+	void decideFirstPlayer(int, int);
+	void setCurrentPlayer(int);
 	void switchPlayerTurn();
 	void endGame(int);
 private:
