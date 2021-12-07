@@ -1,4 +1,4 @@
-#include "Client.hpp"
+#include "../Headers/Client.hpp"
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
@@ -9,7 +9,7 @@
 #include <string>
 #include <sstream>
 
-#include "Message.hpp"
+#include "../Headers/Message.hpp"
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -27,19 +27,28 @@ int main() {
 	});
    
 
-	string input;
-    getline(cin, input);
-    while (input != "exit")
-    {
-    	// Create new Message object with input
-    	const Message msg(input);
-    	std::stringstream messageStream;
-    	boost::archive::text_oarchive archive(messageStream);
-    	archive << msg;
-    	string outboundData = messageStream.str();
-    	client.Send(outboundData);
-        getline(cin, input);
-    }
+	int x, y;
+	cout << "Enter X: ";
+	while (!(cin >> x)) {
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Enter a number";
+	}
+	cout << "Enter Y: ";
+	while (!(cin >> y)) {
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Enter a number";
+	}
+
+	Move move;
+    move.x = x;
+    move.y = y;
+    std::stringstream messageStream;
+    boost::archive::text_oarchive archive(messageStream);
+    archive << move;
+    string outboundData = messageStream.str();
+    client.Send(outboundData);
 
     client.Close();
 

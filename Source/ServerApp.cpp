@@ -1,11 +1,12 @@
-#include "Server.hpp"
+#include "../Headers/Server.hpp"
 #include <iostream>
-#include "Message.hpp"
+#include "../Headers/Message.hpp"
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/bind/bind.hpp>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <vector>
 
 
@@ -17,10 +18,11 @@ int main() {
 		cout << "[!] New client connected: [" << client->remoteAddress() << "]" << endl;
 		client->onMessageReceived = [client](string message) {
 			istringstream ss(message);
-			Message receivedMessage;
+			Move move;
 			boost::archive::text_iarchive ia(ss);
-			ia >> receivedMessage;
-			cout << "[*] [" << client->remoteAddress() << "]:" << client->remotePort() << " => " << receivedMessage.contents << endl;
+			ia >> move;
+			cout << "MOVE Y: " << move.y;
+			cout << "[*] [" << client->remoteAddress() << "]:" << client->remotePort() << " => " << move.x << endl;
 			client->Send("OK!");
 		};
 		client->onSocketClosed = [client](int errCode = 1) {
