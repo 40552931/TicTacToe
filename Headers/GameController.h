@@ -9,6 +9,7 @@ enum State { ACTIVE, QUIT };
 class GameController {
 public:
 	void beginGame();
+	int getPlayerMarkerChoice();
 	void switchPlayerTurn();
 	void endGame(int);
 private:

@@ -1,0 +1,8 @@
+GAME:
+- Toss virtual coin to establish who plays first
+- Allow human to pick X or O > DONE
+- Fix AI so it's not unbeatable...
+- (if possible) GUI with GTK+
+NETWORK:
+- Link up game code
+- (if posbbile) encrypt...
