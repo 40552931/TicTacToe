@@ -13,29 +13,21 @@ void GameController::endGame(int winner) {
 	cout << winner << " WINS!" << endl;
 }
 
-int GameController::getPlayerMarkerChoice() {
-	bool validChoice = false;
-	int choice;
-	do {
-		cout << "Enter 1 for X, 2 for O: ";
-		while (!(cin >> choice)) {
-			cin.clear();
-			cin.ignore(1000, '\n');
-			cout << "ERROR: Enter an integer!\n";
-			cout << "Enter 1 for X, 2 for O: ";
-		}
-		if (choice != 1 && choice != 2)
-			printf("ERROR: Enter 1 or 2! \n");
-		else
-			validChoice = true;
-	} while (!validChoice);
-	return choice;
+void GameController::initializePlayers(int playerMarkerChoice) {
+	int playerMarker = playerMarkerChoice;
+	// get opposite of player marker
+	int computerMarker = playerMarker == X ? O : X;
+	currentGameState = ACTIVE;
+	humanPlayer.initialize(playerMarker);
+	computerPlayer.initialize(computerMarker);
+	decideFirstPlayer(playerMarker, computerMarker);
+	cout << "Player marker = " << playerMarker << " Computer marker = " << computerMarker << " Current player marker = " << currentPlayer->getMarker() << endl;
 }
 
 void GameController::setCurrentPlayer(int currentPlayerMarker) {
 	// Assign currentPlayer to whoever won the toss, also output message because if AI goes first, it takes a while.. 
 	currentPlayerMarker == X ? (currentPlayer = &humanPlayer) : ( cout << "Computer must calculate all possible moves, please be patient\n", currentPlayer = &computerPlayer);
-	std::cout << currentPlayer->getName() << " has won the toss.. they will go first!\n";
+	cout << currentPlayer->getName() << " has won the toss.. they will go first!" << endl;
 }
 
 void GameController::decideFirstPlayer(int playerMarker, int computerMarker) {
@@ -51,13 +43,13 @@ void GameController::decideFirstPlayer(int playerMarker, int computerMarker) {
 void GameController::beginGame() {
 	// Square board size as 3^2 = 9 = number of spaces
 	gameBoard.board.resize(pow(BOARD_SIZE, 2));
-	int playerMarker = getPlayerMarkerChoice();
+	/*int playerMarker = getPlayerMarkerChoice();
 	// get opposite of player marker
 	int computerMarker = playerMarker == X ? O : X;
 	currentGameState = ACTIVE;
 	humanPlayer.initialize(playerMarker);
 	computerPlayer.initialize(computerMarker);
-	decideFirstPlayer(playerMarker, computerMarker);
+	decideFirstPlayer(playerMarker, computerMarker);*/
 	while (currentGameState != QUIT) {
 		gameBoard.print();
 		currentPlayer->performMove(gameBoard);

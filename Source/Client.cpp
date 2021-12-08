@@ -11,6 +11,7 @@ using namespace std;
 void Client::Connect(string host, uint16_t port, function<void()> onConnected) {
 	// hints is a struct that contains info about socket, such a prototype, socktype, etc
 	struct addrinfo hints;
+	memset(&hints, 0, sizeof(hints)); // segfault if no
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	struct addrinfo *result, *rp;
