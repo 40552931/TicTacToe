@@ -2,6 +2,8 @@
 
 #include "Player.h"
 
+#include "../Headers/Message.hpp"
+
 #include <tuple>
 
 class HumanPlayer : public Player {

@@ -33,32 +33,50 @@ void GameController::setCurrentPlayer(int currentPlayerMarker) {
 void GameController::decideFirstPlayer(int playerMarker, int computerMarker) {
 	// Get random number between 1 and 2 (player marker indicator);
 	cout << "Flipping coin to decide who goes first... \n";
-	this_thread::sleep_for(chrono::milliseconds(400));
+	this_thread::sleep_for(chrono::milliseconds(200));
 	random_device randomDevice;
 	mt19937 gen(randomDevice());
 	uniform_int_distribution<> distr(1, 2);
-	setCurrentPlayer(distr(gen));
+	int result = distr(gen);
+	setCurrentPlayer(result);
+	cout << "reuslt: " << result << " computer marker = " << computerMarker <<endl;
+	if (currentPlayer->getMarker() == computerMarker)
+		computerGo();
+}
+
+void GameController::computerGo() {
+	currentPlayer->performMove(gameBoard);
+	gameBoard.print();
+	switchPlayerTurn();
+	return;
+}
+
+void GameController::playerGo() {
+	currentPlayer->performMove(gameBoard);
+	gameBoard.print();
+	switchPlayerTurn();
+	computerGo();
 }
 
 void GameController::beginGame() {
-	// Square board size as 3^2 = 9 = number of spaces
+	cout << "gambegin called" << endl;
 	gameBoard.board.resize(pow(BOARD_SIZE, 2));
-	/*int playerMarker = getPlayerMarkerChoice();
-	// get opposite of player marker
-	int computerMarker = playerMarker == X ? O : X;
-	currentGameState = ACTIVE;
-	humanPlayer.initialize(playerMarker);
-	computerPlayer.initialize(computerMarker);
-	decideFirstPlayer(playerMarker, computerMarker);*/
+	// Square board size as 3^2 = 9 = number of spaces
+	/*gameBoard.board.resize(pow(BOARD_SIZE, 2));
+	int count = 0;
 	while (currentGameState != QUIT) {
+		if (count == 10)
+			break;
 		gameBoard.print();
 		currentPlayer->performMove(gameBoard);
+		this_thread::sleep_for(chrono::milliseconds(800));
 		int winner = gameBoard.checkVictory();
 		if (winner != BLANK)
 			endGame(winner);
 		else
 			switchPlayerTurn();
-	}
+		count++;
+	}*/
 }
 
 void GameController::switchPlayerTurn() {

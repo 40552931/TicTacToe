@@ -2,6 +2,8 @@
 
 #include "../Headers/ComputerPlayer.h"
 
+using namespace std;
+
 Move ComputerPlayer::getMove(GameBoard& board, int player, int depth) {
 	/**
 	 * minimax algorithm implementation to find the best move
@@ -64,6 +66,7 @@ Move ComputerPlayer::getMove(GameBoard& board, int player, int depth) {
 
 void ComputerPlayer::performMove(GameBoard& board) {
 	Move bestPossibleMove = getMove(board, getMarker());
+	board.computerMoves.push_back(bestPossibleMove);
 	int x, y;
 	std::tie(x, y) = bestPossibleMove.position;
 	board.setValueAtPosition(x, y, getMarker());

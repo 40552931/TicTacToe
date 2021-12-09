@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include <chrono>
+#include <thread>
 
 #include "../Headers/Client.h"
 #include "../Headers/Message.hpp"
@@ -44,14 +46,46 @@ int main() {
     		isValidChoice = true;
     } while (!isValidChoice);
 
+
     SendableObject sObj("Marker choice", markerChoice);
     std::stringstream messageStream;
     boost::archive::text_oarchive archive(messageStream);
     archive << sObj;
     string outboundData = messageStream.str();
-    cout << "Sending: " << outboundData << endl;
-
     client.Send(outboundData);
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	while (1) {
+		bool valid =false;
+		int x, y;
+		do {
+			cout << "Enter X: " << endl;
+			while (!(cin >> x)) {
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Enter a number" << endl;
+			}
+			cout << "Enter Y: " << endl;
+			while (!(cin >> y)) {
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Enter a number" << endl;
+			}
+
+			if (x < 1 || y < 1 || x > 3 || y > 3) {
+				printf("ERROR: Invalid X or Y!\n");
+			}
+			else {
+				valid = true;
+			}
+		} while (!valid);
+
+	    SendableObject sObj2("Move", x, y);
+	    std::stringstream messageStream2;
+	    boost::archive::text_oarchive archive2(messageStream2);
+	    archive2 << sObj2;
+	    string outboundData2 = messageStream2.str();
+	    client.Send(outboundData2);
+	}
 
     client.Close();
 

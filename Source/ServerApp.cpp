@@ -17,6 +17,7 @@ int main() {
 	Server server;
 	server.uponNewCon = [&](Client *client) {
 		GameController game;
+		game.beginGame();
 		cout << "[!] New client connected: [" << client->getRemoteAddress() << "]" << endl;
 		client->onMessageReceived = [client, game](string message) mutable {
 			istringstream ss(message);
@@ -31,6 +32,9 @@ int main() {
 				game.initializePlayers(playerMarker);
 			} else if (sObj.indicator == "Move") {
 				// Handle extracting values, and using get in perform / get move()
+				get<0>(game.getCurrentPlayer()->nextMove) = get<0>(sObj.position);
+				get<1>(game.getCurrentPlayer()->nextMove) = get<1>(sObj.position);
+				game.playerGo();
 			}
 		};
 		client->onSocketClosed = [client](int errCode = 1) {

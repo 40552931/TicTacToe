@@ -26,6 +26,7 @@ int GameBoard::getValueAtPosition(int x, int y) const {
 }
 
 void GameBoard::setValueAtPosition(int x, int y, int markerValue) {
+	//cout << "Setting value at (" << x + 1 << "," << y + 1 << ")" << " by " << markerValue << endl;
 	board[y * 3 + x] = markerValue;
 }
 

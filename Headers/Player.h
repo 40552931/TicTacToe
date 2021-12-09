@@ -1,16 +1,9 @@
 #pragma once
 
 #include "GameBoard.h"
+#include "../Headers/Message.hpp"
 
 #include <tuple>
-
-struct Move {
-	Move() {}
-	Move(int moveRating) : moveRating(moveRating) {}
-	Move(int x, int y) : position(x, y) {}
-	std::tuple<int, int> position;
-	int moveRating;
-};
 
 class Player {
 public:
@@ -22,6 +15,7 @@ public:
 	int getOtherPlayerMarker() { return _otherPlayer; };
 	std::string getName() { return _name; };
 	void setName(std::string name) { _name = name; };
+	std::tuple<int, int> nextMove;
 private:
 	std::string _name;
 	int _marker;
