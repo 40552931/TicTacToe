@@ -25,16 +25,16 @@ int main() {
 			boost::archive::text_iarchive ia(ss);
 			ia >> sObj;
 			cout << "[*] [" << client->getRemoteAddress() << "]:" << client->getRemotePort() << " => " << sObj.indicator << endl;
-			if (sObj.indicator == "Marker choice") {
+			if (sObj.indicator == "MARKER_CHOICE") {
 				// Set up player markers - see begingame
 				int playerMarker = sObj.markerChoice;
 				game.initializePlayers(playerMarker);
-			} else if (sObj.indicator == "Move") {
+			} else if (sObj.indicator == "MOVE_REQUEST") {
 				// Handle extracting values, and using get in perform / get move()
 				get<0>(game.getCurrentPlayer()->nextMove) = get<0>(sObj.position);
 				get<1>(game.getCurrentPlayer()->nextMove) = get<1>(sObj.position);
 				if (game.canMoveAtPosition(get<0>(sObj.position), get<1>(sObj.position))) {
-					//cout << "yeah it can move: " << game.gameBoard.getValueAtPosition(get<0>(sObj.position), get<1>(sObj.position)) << endl;
+					cout << "yeah it can move: " << game.gameBoard.getValueAtPosition(get<0>(sObj.position), get<1>(sObj.position)) << endl;
 					game.playerGo();
 					if (int winner = game.checkVictory()) {
 						game.endGame(winner);
