@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <string>
 
 #include "../Headers/HumanPlayer.h"
 #include "../Headers/ComputerPlayer.h"

@@ -5,12 +5,92 @@
 #include <thread>
 
 #include "../Headers/GameController.h"
+#include "../Headers/GameBoard.h"
 
 using namespace std;
 
 void GameController::endGame(int winner) {
 	cout << "-= GAME OVER =-" << endl;
 	cout << winner << " WINS!" << endl;
+}
+
+int GameController::checkVictory() {
+	// maybe re-write this... bit clunky
+	bool hasWon;
+	int winnerMarker;
+	//row
+	for (int y = 0; y < 3; y++)
+	{
+		winnerMarker = gameBoard.getValueAtPosition(0, y);
+		if (winnerMarker != BLANK) {
+			hasWon = true;
+			for (int x = 0; x < 3; x++)
+			{
+				if (gameBoard.getValueAtPosition(x, y) != winnerMarker) {
+					hasWon = false;
+					break;
+				}
+			}
+			if (hasWon) {
+				return winnerMarker;
+			}
+		}
+	}
+	// col
+	for (int x = 0; x < 3; x++)
+	{
+		winnerMarker = gameBoard.getValueAtPosition(x, 0);
+		if (winnerMarker != BLANK) {
+			hasWon = true;
+			for (int y = 0; y < 3; y++)
+			{
+				if (gameBoard.getValueAtPosition(x, y) != winnerMarker) {
+					hasWon = false;
+					break;
+				}
+			}
+			if (hasWon) {
+				return winnerMarker;
+			}
+		}
+	}
+	// diag
+	winnerMarker = gameBoard.getValueAtPosition(0, 0);
+	if (winnerMarker != BLANK) {
+		hasWon = true;
+		for (int xy = 0; xy < 3; xy++) {
+			if (gameBoard.getValueAtPosition(xy, xy) != winnerMarker) {
+				hasWon = false;
+				break;
+			}
+		}
+		if (hasWon) {
+			return winnerMarker;
+		}
+	}
+	// other diag
+	winnerMarker = gameBoard.getValueAtPosition(BOARD_SIZE - 1, 0);
+	if (winnerMarker != BLANK) {
+		hasWon = true;
+		for (int xy = 0; xy < BOARD_SIZE; xy++) {
+			if (gameBoard.getValueAtPosition(BOARD_SIZE - xy - 1, xy) != winnerMarker) {
+				hasWon = false;
+				break;
+			}
+		}
+		if (hasWon) {
+			return winnerMarker;
+		}
+	}
+
+	for (size_t x = 0; x < 3; x++) {
+		for (size_t y = 0; y < 3; y++)
+		{
+			if (gameBoard.getValueAtPosition(x, y) == BLANK) return BLANK;
+		}
+	}
+	// If we get here, every spot was filled, so return tie
+	return TIE_INDICATOR;
 }
 
 void GameController::initializePlayers(int playerMarkerChoice) {
@@ -44,6 +124,10 @@ void GameController::decideFirstPlayer(int playerMarker, int computerMarker) {
 		computerGo();
 }
 
+bool GameController::canMoveAtPosition(int x, int y) {
+	return (gameBoard.getValueAtPosition(x-1, y-1) == 0);
+}
+
 void GameController::computerGo() {
 	currentPlayer->performMove(gameBoard);
 	gameBoard.print();
@@ -55,6 +139,10 @@ void GameController::playerGo() {
 	currentPlayer->performMove(gameBoard);
 	gameBoard.print();
 	switchPlayerTurn();
+	for (auto & elem : gameBoard.board) {
+		cout<<elem<< " ";
+	}
+	cout << endl;
 	computerGo();
 }
 

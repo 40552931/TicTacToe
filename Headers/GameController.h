@@ -19,6 +19,8 @@ public:
 	void endGame(int);
 	void playerGo();
 	void computerGo();
+	bool canMoveAtPosition(int x, int y);
+	int checkVictory();
 	GameBoard gameBoard;
 private:
 	State currentGameState;

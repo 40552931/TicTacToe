@@ -2,11 +2,13 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/vector.hpp>
 #include "../Headers/SerializeTuple.h"
 
 #include <string>
 #include <iostream>
 #include <tuple>
+#include <vector>
 
 struct Move {
 	Move() {}
@@ -14,6 +16,29 @@ struct Move {
 	Move(int x, int y) : position(x, y) {}
 	std::tuple<int, int> position;
 	int moveRating;
+};
+
+class ServerResponse {
+public:
+	std::vector<int> board;
+	std::string message;
+	int winner;
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version) {
+		ar & board;
+		ar & message;
+	}
+	ServerResponse() {};
+	ServerResponse(std::string _message) { message = _message; }
+	ServerResponse(std::string _message, std::vector<int> _board) {
+		board = _board;
+		message = _message;
+	}
+	ServerResponse(std::string _message, int _winner) {
+		winner = _winner;
+		message = _message;
+	}
 };
 
 class SendableObject {

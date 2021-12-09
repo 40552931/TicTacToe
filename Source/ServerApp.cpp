@@ -25,7 +25,6 @@ int main() {
 			boost::archive::text_iarchive ia(ss);
 			ia >> sObj;
 			cout << "[*] [" << client->getRemoteAddress() << "]:" << client->getRemotePort() << " => " << sObj.indicator << endl;
-			client->Send("OK!");
 			if (sObj.indicator == "Marker choice") {
 				// Set up player markers - see begingame
 				int playerMarker = sObj.markerChoice;
@@ -34,7 +33,35 @@ int main() {
 				// Handle extracting values, and using get in perform / get move()
 				get<0>(game.getCurrentPlayer()->nextMove) = get<0>(sObj.position);
 				get<1>(game.getCurrentPlayer()->nextMove) = get<1>(sObj.position);
-				game.playerGo();
+				if (game.canMoveAtPosition(get<0>(sObj.position), get<1>(sObj.position))) {
+					//cout << "yeah it can move: " << game.gameBoard.getValueAtPosition(get<0>(sObj.position), get<1>(sObj.position)) << endl;
+					game.playerGo();
+					if (int winner = game.checkVictory()) {
+						game.endGame(winner);
+						ServerResponse serverResponseObject("WINNER_DETECTED", winner);
+	    				std::stringstream messageStream;
+	    				boost::archive::text_oarchive archive(messageStream);
+	    				archive << serverResponseObject;
+	    				string outboundData = messageStream.str();
+	    				cout << "sending data with message WINNER_DETECTED" << endl;
+						client->Send(outboundData);
+					}
+					ServerResponse serverResponseObject("OK");
+    				std::stringstream messageStream;
+    				boost::archive::text_oarchive archive(messageStream);
+    				archive << serverResponseObject;
+    				string outboundData = messageStream.str();
+    				cout << "sending data with message OK" << endl;
+					client->Send(outboundData);
+				}
+				else {
+					ServerResponse serverResponseObject("ERROR_SPACE_TAKEN");
+    				std::stringstream messageStream;
+    				boost::archive::text_oarchive archive(messageStream);
+    				archive << serverResponseObject;
+    				string outboundData = messageStream.str();
+					client->Send(outboundData);
+				}
 			}
 		};
 		client->onSocketClosed = [client](int errCode = 1) {

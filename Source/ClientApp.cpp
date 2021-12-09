@@ -22,11 +22,28 @@ using namespace std;
 int main() {
 	GameController game;
 	Client client;
-	client.onMessageReceived = [](string message) {
-		cout << "[*] Message from server: " << message << endl;
+	client.onMessageReceived = [game, client](string message) mutable {
+		//cout << "[*] Message from server: " << message << endl;
+		istringstream ss(message);
+		ServerResponse serverResponseObject;
+		boost::archive::text_iarchive ia(ss);
+		ia >> serverResponseObject;
+		cout << "Reponse message: " << serverResponseObject.message << endl;
+		if (serverResponseObject.message == "OK") {
+			// Handle OK
+		} else if (serverResponseObject.message == "ERROR_SPACE_TAKEN") {
+			// Handle error
+		} else if (serverResponseObject.message == "WINNER_DETECTED") {
+			// Handle winner
+			cout << "Winner detected, closing connection" << endl;
+			game.endGame(serverResponseObject.winner);
+			client.Close();
+			exit(0);
+			cout << "da fuck"<<endl;
+		} 
 	};
 	client.Connect("0.0.0.0", 8888, [&] {
-		cout << "[*] Connected to server successfully \n" << endl;
+		cout << "[*] Connected to server successfully" << endl;
 	});
    
     cout << "Welcome to the Tic Tac Toe Game" << endl;
