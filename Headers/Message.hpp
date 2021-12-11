@@ -22,22 +22,34 @@ class ServerResponse {
 public:
 	std::vector<int> board;
 	std::string message;
+	std::string boardString;
 	int winner;
+	int currentTurnPlayerMarker;
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned int version) {
 		ar & board;
 		ar & message;
+		ar & boardString;
+		ar & currentTurnPlayerMarker;
+		ar & winner;
 	}
 	ServerResponse() {};
-	ServerResponse(std::string _message) { message = _message; }
-	ServerResponse(std::string _message, std::vector<int> _board) {
+	ServerResponse(std::string _message) { message = _message; };
+	ServerResponse(std::string _message, std::string _boardString, std::vector<int> _board) {
 		board = _board;
 		message = _message;
+		boardString = _boardString;
 	}
-	ServerResponse(std::string _message, int _winner) {
+	ServerResponse(std::string _message, std::string _boardString, int _currentTurnPlayerMarker) {
+		boardString = _boardString;
+		message = _message;
+		currentTurnPlayerMarker = _currentTurnPlayerMarker;
+	}
+	ServerResponse(std::string _message, int _winner, std::string _boardString) {
 		winner = _winner;
 		message = _message;
+		boardString = _boardString;
 	}
 };
 

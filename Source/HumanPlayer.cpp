@@ -9,7 +9,6 @@
 using namespace std;
 
 Move HumanPlayer::getMove(GameBoard&, int, int) {
-	cout << "human getmove" << endl;
 	int x, y;
 	x = get<0>(nextMove);
 	y = get<1>(nextMove);
@@ -18,8 +17,8 @@ Move HumanPlayer::getMove(GameBoard&, int, int) {
 }
 
 void HumanPlayer::performMove(GameBoard& board) {
-	cout << "Player going" << endl;
 	Move playerMove = getMove(board, getMarker());
+	cout << "[*] Player moving to (" << get<0>(playerMove.position) << ", " << get<1>(playerMove.position) << ")" << endl;
 	board.humanMoves.push_back(playerMove);
 	int x, y;
 	tie(x, y) = playerMove.position;

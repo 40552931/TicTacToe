@@ -1,8 +1,11 @@
 GAME:
-- Toss virtual coin to establish who plays first
+- Toss virtual coin to establish who plays first > DONE
 - Allow human to pick X or O > DONE
 - Fix AI so it's not unbeatable...
 - (if possible) GUI with GTK+
 NETWORK:
-- Link up game code
+- Link up game code > DONE
 - (if posbbile) encrypt...
+
+CODE:
+- Make server / client messages into int response codes and create enum.

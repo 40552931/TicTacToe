@@ -33,17 +33,19 @@ void ClientApp::onMessageReceive(string message) {
 	ia >> serverResponseObject;
 	if (serverResponseObject.message == "OK") {
 		// Handle OK
-		cout << "Server says OK!" << endl;
+		string markerString = serverResponseObject.currentTurnPlayerMarker == 1 ? "X" : "O";
+		cout << "[*] Next turn: " << markerString << endl;
+		cout << serverResponseObject.boardString << endl;
 	} else if (serverResponseObject.message == "ERROR_SPACE_TAKEN") {
 		// Handle error
-		cout << "You can't move there!" << endl;
+		cout << "[!] That space is already taken, please choose another..." << endl;
 	} else if (serverResponseObject.message == "WINNER_DETECTED") {
 		// Handle winner
-		cout << "Winner detected, closing connection" << endl;
+		cout << "[!] Winner detected, closing connection" << endl;
+		cout << serverResponseObject.boardString << endl;
 		game.endGame(serverResponseObject.winner);
 		client.Close();
 		exit(0);
-		cout << "da fuck"<<endl;
 	} else {
 		cout << "got a weird one...";
 	}
@@ -53,7 +55,7 @@ void ClientApp::beginConnection() {
 	client.Connect("0.0.0.0", 8888, [&] {
 		cout << "[*] Connected to server successfully" << endl;
 	});
-	cout << "Welcome to the Tic Tac Toe Game" << endl;
+	cout << "[*] Welcome to the Tic Tac Toe Game" << endl;
 }
 
 void ClientApp::serializeAndSend(SendableObject sObj) {
@@ -68,18 +70,20 @@ void ClientApp::beginMarkerChoice() {
 	bool isValidChoice = false;
     int markerChoice;
     do {
-    	cout << "Enter 1 for X or 2 for O: " << endl;
+    	cout << "[*] Enter 1 for X or 2 for O: " << endl;
     	while(!(cin >> markerChoice)) {
     		cin.clear();
     		cin.ignore(1000, '\n');
-    		cout << "ERROR: Enter an integer!" << endl;
-    		cout << "Enter 1 for X or 2 for O: " << endl;
+    		cout << "[!] ERROR: Enter an integer!" << endl;
+    		cout << "[*] Enter 1 for X or 2 for O: " << endl;
     	}
     	if (markerChoice != 1 && markerChoice != 2)
-    		cout << "ERROR: Enter 1 or 2!" << endl;
+    		cout << "[!] ERROR: Enter 1 or 2!" << endl;
     	else
     		isValidChoice = true;
     } while (!isValidChoice);
+    string markerString = markerChoice == 1 ? "X" : "O";
+	cout << "[*] You have chosen: " << markerString << endl;
     SendableObject sObj("MARKER_CHOICE", markerChoice);
     serializeAndSend(sObj);
 }
@@ -89,21 +93,23 @@ void ClientApp::beginMoveInputSequence() {
 		bool valid =false;
 		int x, y;
 		do {
-			cout << "Enter X: " << endl;
+			// wait a little, otherwise output gets swallowed..
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
+			cout << "[*] Enter X: ";
 			while (!(cin >> x)) {
 				cin.clear();
 				cin.ignore(1000, '\n');
-				cout << "Enter a number" << endl;
+				cout << "[!] Enter a number" << endl;
 			}
-			cout << "Enter Y: " << endl;
+			cout << "[*] Enter Y: ";
 			while (!(cin >> y)) {
 				cin.clear();
 				cin.ignore(1000, '\n');
-				cout << "Enter a number" << endl;
+				cout << "[!] Enter a number" << endl;
 			}
 
 			if (x < 1 || y < 1 || x > 3 || y > 3) {
-				printf("ERROR: Invalid X or Y!\n");
+				printf("[!] ERROR: Invalid X or Y!\n");
 			}
 			else {
 				valid = true;

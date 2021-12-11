@@ -66,6 +66,7 @@ Move ComputerPlayer::getMove(GameBoard& board, int player, int depth) {
 
 void ComputerPlayer::performMove(GameBoard& board) {
 	Move bestPossibleMove = getMove(board, getMarker());
+	cout << "[*] Computer moving to (" << get<0>(bestPossibleMove.position) + 1 << ", " << get<1>(bestPossibleMove.position) + 1 << ")" << endl;
 	board.computerMoves.push_back(bestPossibleMove);
 	int x, y;
 	std::tie(x, y) = bestPossibleMove.position;

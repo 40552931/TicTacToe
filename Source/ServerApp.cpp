@@ -29,29 +29,33 @@ int main() {
 				// Set up player markers - see begingame
 				int playerMarker = sObj.markerChoice;
 				game.initializePlayers(playerMarker);
+				ServerResponse serverResponseObject("OK", game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker());
+    			std::stringstream messageStream;
+    			boost::archive::text_oarchive archive(messageStream);
+    			archive << serverResponseObject;
+    			string outboundData = messageStream.str();
+				client->Send(outboundData);
 			} else if (sObj.indicator == "MOVE_REQUEST") {
 				// Handle extracting values, and using get in perform / get move()
 				get<0>(game.getCurrentPlayer()->nextMove) = get<0>(sObj.position);
 				get<1>(game.getCurrentPlayer()->nextMove) = get<1>(sObj.position);
 				if (game.canMoveAtPosition(get<0>(sObj.position), get<1>(sObj.position))) {
-					cout << "yeah it can move: " << game.gameBoard.getValueAtPosition(get<0>(sObj.position), get<1>(sObj.position)) << endl;
 					game.playerGo();
-					if (int winner = game.checkVictory()) {
+					if (game.checkVictory()) {
+						int winner = game.checkVictory();
 						game.endGame(winner);
-						ServerResponse serverResponseObject("WINNER_DETECTED", winner);
+						ServerResponse serverResponseObject("WINNER_DETECTED", winner, game.gameBoard.getBoardString());
 	    				std::stringstream messageStream;
 	    				boost::archive::text_oarchive archive(messageStream);
 	    				archive << serverResponseObject;
 	    				string outboundData = messageStream.str();
-	    				cout << "sending data with message WINNER_DETECTED" << endl;
 						client->Send(outboundData);
 					}
-					ServerResponse serverResponseObject("OK");
+					ServerResponse serverResponseObject("OK", game.gameBoard.getBoardString(), game.gameBoard.board);
     				std::stringstream messageStream;
     				boost::archive::text_oarchive archive(messageStream);
     				archive << serverResponseObject;
     				string outboundData = messageStream.str();
-    				cout << "sending data with message OK" << endl;
 					client->Send(outboundData);
 				}
 				else {
@@ -71,9 +75,7 @@ int main() {
 	};
 
 	server.Bind("0.0.0.0", 8888);
-	cout << "bound" << endl;
 	server.Listen();
-	cout << "listening" << endl;
 
 	string input;
 	getline(cin, input);

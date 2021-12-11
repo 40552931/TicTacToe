@@ -30,6 +30,32 @@ void GameBoard::setValueAtPosition(int x, int y, int markerValue) {
 	board[y * 3 + x] = markerValue;
 }
 
+string GameBoard::getBoardString() {
+	string out = "\n";
+	for (int y = 2; y >= 0; y--)
+	{
+		out += string("---------------------------------\n");
+		out += string("|         |") += string("|         |") += string("|         |\n");
+		for (int x = 0; x < 3; x++)
+		{
+			switch (getValueAtPosition(x, y)) {
+			case 0:
+				out += string("|    .    |");
+				break;
+			case 1:
+				out += string("|    X    |");
+				break;
+			case 2:
+				out += string("|    O    |");
+				break;
+			}
+		}
+		out += string("\n|         |") += string("|         |") += string("|         |\n");
+	}
+	out += BOTTOM_AXIS;
+	return out;
+}
+
 void GameBoard::print() {
 	for (int y = 2; y >= 0; y--)
 	{
