@@ -31,18 +31,32 @@ void ClientApp::onMessageReceive(string message) {
 	ServerResponse serverResponseObject;
 	boost::archive::text_iarchive ia(ss);
 	ia >> serverResponseObject;
-	if (serverResponseObject.message == "OK") {
-		// Handle OK
-		string markerString = serverResponseObject.currentTurnPlayerMarker == 1 ? "X" : "O";
-		cout << "[*] Next turn: " << markerString << endl;
-		cout << serverResponseObject.boardString << endl;
-	} else if (serverResponseObject.message == "ERROR_SPACE_TAKEN") {
-		// Handle error
-		cout << "[!] That space is already taken, please choose another..." << endl;
+	if (serverResponseObject.message == "BEGIN_GAME_RESPONSE") {
+		if (serverResponseObject.responseCode == 0) {
+			cout << "[*] Response from server: OK - starting game." << endl;
+		} else {
+			cout << "[!] There was an issue starting the game" << endl;
+		}
+	}
+	else if (serverResponseObject.message == "MARKER_CHOICE_RESPONSE") {
+		if (serverResponseObject.responseCode == 0) {
+			string markerString = serverResponseObject.currentTurnPlayerMarker == 1 ? "X" : "O";
+			cout << "[*] Next turn: " << markerString << endl;
+			cout << serverResponseObject.printableGameBoard << endl;
+		} else {
+			cout << "[!] There was an error with your marker choice... " << endl;
+		}
+	} else if (serverResponseObject.message == "MOVE_RESPONSE") {
+		if (serverResponseObject.responseCode == 0) {
+			cout << "[*] Move completed" << endl;
+			cout << serverResponseObject.printableGameBoard << endl;
+		} else {
+			cout << "[!] That space is already taken, please choose another..." << endl;
+		}
 	} else if (serverResponseObject.message == "WINNER_DETECTED") {
 		// Handle winner
 		cout << "[!] Winner detected, closing connection" << endl;
-		cout << serverResponseObject.boardString << endl;
+		cout << serverResponseObject.printableGameBoard << endl;
 		game.endGame(serverResponseObject.winner);
 		client.Close();
 		exit(0);
@@ -51,14 +65,29 @@ void ClientApp::onMessageReceive(string message) {
 	}
 }
 
+void ClientApp::askToPlay() {
+	string type;
+	do {
+		cout << "[*] Would you like to begin the game? [y/n]: " << endl;
+		cin >> type;
+	} while (!cin.fail() && type!="y" && type!="n");
+	if (type == "y") {
+		ClientRequest beginGame("BEGIN_GAME_REQUEST");
+		serializeAndSend(beginGame);
+	} else {
+		exit(0);
+	}
+}
+
 void ClientApp::beginConnection() {
 	client.Connect("0.0.0.0", 8888, [&] {
 		cout << "[*] Connected to server successfully" << endl;
 	});
 	cout << "[*] Welcome to the Tic Tac Toe Game" << endl;
+	askToPlay();
 }
 
-void ClientApp::serializeAndSend(SendableObject sObj) {
+void ClientApp::serializeAndSend(ClientRequest sObj) {
     std::stringstream messageStream;
     boost::archive::text_oarchive archive(messageStream);
     archive << sObj;
@@ -84,7 +113,7 @@ void ClientApp::beginMarkerChoice() {
     } while (!isValidChoice);
     string markerString = markerChoice == 1 ? "X" : "O";
 	cout << "[*] You have chosen: " << markerString << endl;
-    SendableObject sObj("MARKER_CHOICE", markerChoice);
+    ClientRequest sObj("MARKER_CHOICE_REQUEST", markerChoice);
     serializeAndSend(sObj);
 }
 
@@ -115,7 +144,7 @@ void ClientApp::beginMoveInputSequence() {
 				valid = true;
 			}
 		} while (!valid);
-		SendableObject sObj("MOVE_REQUEST", x, y);
+		ClientRequest sObj("MOVE_REQUEST", make_tuple(x, y));
 		serializeAndSend(sObj);
 	}
 }
@@ -125,6 +154,7 @@ void ClientApp::beginMoveInputSequence() {
 int main() {
 	ClientApp clientApp;
 	clientApp.beginConnection();
+	std::this_thread::sleep_for(std::chrono::milliseconds(200));
 	clientApp.beginMarkerChoice();
 	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	clientApp.beginMoveInputSequence();

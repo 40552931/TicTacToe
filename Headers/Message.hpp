@@ -17,62 +17,83 @@ struct Move {
 	std::tuple<int, int> position;
 	int moveRating;
 };
+ 
 
-class ServerResponse {
+class ClientRequest {
 public:
-	std::vector<int> board;
-	std::string message;
-	std::string boardString;
-	int winner;
-	int currentTurnPlayerMarker;
 	friend class boost::serialization::access;
+
+	int markerChoice; // for marker selection
+	std::string message; // Sent with all requests
+	std::tuple<int, int> position; // Move request
 	template<class Archive>
-	void serialize(Archive& ar, const unsigned int version) {
-		ar & board;
-		ar & message;
-		ar & boardString;
-		ar & currentTurnPlayerMarker;
-		ar & winner;
+	void serialize(Archive& serializationArchive, const unsigned int version) {
+		serializationArchive & markerChoice;
+		serializationArchive & message;
+		serializationArchive & position;
 	}
-	ServerResponse() {};
-	ServerResponse(std::string _message) { message = _message; };
-	ServerResponse(std::string _message, std::string _boardString, std::vector<int> _board) {
-		board = _board;
-		message = _message;
-		boardString = _boardString;
+
+	ClientRequest() { };
+
+	// Move request overload
+	ClientRequest(std::string message, std::tuple<int, int> position) {
+		this->message = message;
+		this->position = position;
 	}
-	ServerResponse(std::string _message, std::string _boardString, int _currentTurnPlayerMarker) {
-		boardString = _boardString;
-		message = _message;
-		currentTurnPlayerMarker = _currentTurnPlayerMarker;
+
+	// Begin game request & check for winner overload
+	ClientRequest(std::string message) {
+		this->message = message;
 	}
-	ServerResponse(std::string _message, int _winner, std::string _boardString) {
-		winner = _winner;
-		message = _message;
-		boardString = _boardString;
+
+	// Marker choice request overload
+	ClientRequest(std::string message, int markerChoice) {
+		this->message = message;
+		this->markerChoice = markerChoice;
 	}
 };
 
-class SendableObject {
+class ServerResponse {
 public:
-	std::tuple<int, int> position;
-	std::string indicator;
-	int markerChoice;
 	friend class boost::serialization::access;
+
+	std::string message; // Sent with all responses
+	std::string printableGameBoard;  // Sent with marker choice, move ok, begin game responses
+	int responseCode; // Sent with all responses
+	int winner; // Sent with check for winner request
+	int currentTurnPlayerMarker; // Sent with move ok responses
 	template<class Archive>
-	void serialize(Archive& ar, const unsigned int version) {
-		ar & position;
-		ar & markerChoice;
-		ar & indicator;
+	void serialize(Archive& serializationArchive, const unsigned int version) {
+		serializationArchive & message;
+		serializationArchive & printableGameBoard;
+		serializationArchive & responseCode;
+		serializationArchive & winner;
+		serializationArchive & currentTurnPlayerMarker;
 	}
-	SendableObject() {}; // empty constructor
-	SendableObject(std::string _indicator, int x, int y) { 
-		position = std::make_tuple(x, y); 
-		indicator = _indicator;
+
+	// Empty constructor
+	ServerResponse() { };
+
+	// Marker choice & move response overload
+	ServerResponse(int responseCode, std::string message, std::string printableGameBoard, int currentTurnPlayerMarker) {
+		this->responseCode = responseCode;
+		this->message = message;
+		this->printableGameBoard = printableGameBoard;
+		this->currentTurnPlayerMarker = currentTurnPlayerMarker;
 	}
-	SendableObject(std::string _indicator, int _markerChoice) { 
-		markerChoice = _markerChoice; 
-		indicator = _indicator;
+
+	// Begin game overload
+	ServerResponse(int responseCode, std::string message) {
+		this->responseCode = responseCode;
+		this->message = message;
+		this->printableGameBoard = printableGameBoard;
 	}
-	SendableObject(int x, int y) {position = std::make_tuple(x,y);}
+
+	// Check for winner response overload
+	ServerResponse(int responseCode, std::string message, int winner, std::string printableGameBoard) {
+		this->responseCode = responseCode;
+		this->message = message;
+		this->winner = winner;
+		this->printableGameBoard = printableGameBoard;
+	}
 };

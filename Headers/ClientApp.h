@@ -12,8 +12,9 @@ public:
 	void onMessageReceive(std::string);
 	void beginConnection();
 	void beginMarkerChoice();
-	void serializeAndSend(SendableObject);
+	void serializeAndSend(ClientRequest);
 	void beginMoveInputSequence();
+	void askToPlay();
 	Client client;
 	GameController game;
 };

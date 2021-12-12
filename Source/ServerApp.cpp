@@ -17,25 +17,33 @@ int main() {
 	Server server;
 	server.uponNewCon = [&](Client *client) {
 		GameController game;
-		game.beginGame();
 		cout << "[!] New client connected: [" << client->getRemoteAddress() << "]" << endl;
 		client->onMessageReceived = [client, game](string message) mutable {
 			istringstream ss(message);
-			SendableObject sObj;
+			ClientRequest sObj;
 			boost::archive::text_iarchive ia(ss);
 			ia >> sObj;
-			cout << "[*] [" << client->getRemoteAddress() << "]:" << client->getRemotePort() << " => " << sObj.indicator << endl;
-			if (sObj.indicator == "MARKER_CHOICE") {
+			cout << "[*] [" << client->getRemoteAddress() << "]:" << client->getRemotePort() << " => " << sObj.message << endl;
+			if (sObj.message == "BEGIN_GAME_REQUEST") {
+				game.beginGame();
+				ServerResponse response(0, message="BEGIN_GAME_RESPONSE");
+    			std::stringstream messageStream;
+    			boost::archive::text_oarchive archive(messageStream);
+    			archive << response;
+    			string outboundData = messageStream.str();
+				client->Send(outboundData);
+			}
+			else if (sObj.message == "MARKER_CHOICE_REQUEST") {
 				// Set up player markers - see begingame
 				int playerMarker = sObj.markerChoice;
 				game.initializePlayers(playerMarker);
-				ServerResponse serverResponseObject("OK", game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker());
+				ServerResponse response(0, message="MARKER_CHOICE_RESPONSE", game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker());
     			std::stringstream messageStream;
     			boost::archive::text_oarchive archive(messageStream);
-    			archive << serverResponseObject;
+    			archive << response;
     			string outboundData = messageStream.str();
 				client->Send(outboundData);
-			} else if (sObj.indicator == "MOVE_REQUEST") {
+			} else if (sObj.message == "MOVE_REQUEST") {
 				// Handle extracting values, and using get in perform / get move()
 				get<0>(game.getCurrentPlayer()->nextMove) = get<0>(sObj.position);
 				get<1>(game.getCurrentPlayer()->nextMove) = get<1>(sObj.position);
@@ -44,25 +52,25 @@ int main() {
 					if (game.checkVictory()) {
 						int winner = game.checkVictory();
 						game.endGame(winner);
-						ServerResponse serverResponseObject("WINNER_DETECTED", winner, game.gameBoard.getBoardString());
+						ServerResponse response(0, message="WINNER_DETECTED", winner, game.gameBoard.getBoardString());
 	    				std::stringstream messageStream;
 	    				boost::archive::text_oarchive archive(messageStream);
-	    				archive << serverResponseObject;
+	    				archive << response;
 	    				string outboundData = messageStream.str();
 						client->Send(outboundData);
 					}
-					ServerResponse serverResponseObject("OK", game.gameBoard.getBoardString(), game.gameBoard.board);
+					ServerResponse response(0, message="MOVE_RESPONSE", game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker());
     				std::stringstream messageStream;
     				boost::archive::text_oarchive archive(messageStream);
-    				archive << serverResponseObject;
+    				archive << response;
     				string outboundData = messageStream.str();
 					client->Send(outboundData);
 				}
 				else {
-					ServerResponse serverResponseObject("ERROR_SPACE_TAKEN");
+					ServerResponse response(1, "MOVE_RESPONSE");
     				std::stringstream messageStream;
     				boost::archive::text_oarchive archive(messageStream);
-    				archive << serverResponseObject;
+    				archive << response;
     				string outboundData = messageStream.str();
 					client->Send(outboundData);
 				}

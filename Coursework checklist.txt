@@ -1,0 +1,21 @@
+DONE • A player can connect to the game server and request to play.
+DONE • Human will play the game in a console window (more possibilities below), and Computer
+DONE will be a service running as a game server.
+DONE • Computer will allow Human to play either x or o, whichever Human prefers.
+DONE • Computer will toss a virtual coin to establish whether Human or Computer will play 
+DONE first, and
+DONE announce the result.
+DONE • The game will be played by both parties till completion, then Computer will announce the
+DONE winner, or announce a draw.
+DONE • Computer does not need to play optimally. However, the following are required:
+DONE	▪ Computer must play only legal moves.
+DONE	▪ Computer must not allow Human to play illegal moves.
+DONE	▪ Computer must recognise when the game has been won, by either party, announce the
+DONE	result, and terminate the game.
+DONE	▪ If during its turn, Computer can play a winning move, it must play it.
+DONE	▪ If during its turn, Computer can block Human from playing a winning move
+DONE	immediately after, it must block it. 
+
+Things i want to change
+DONE - Client request / server repsonse objects are awful they need changing
+- clean up serverapp.cpp 
