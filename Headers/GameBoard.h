@@ -17,6 +17,7 @@ class GameBoard {
 public:
 	GameBoard();
 	void print();
+	void clear();
 	int getValueAtPosition(int, int) const;
 	void setValueAtPosition(int, int, int);
 	std::string getBoardString();

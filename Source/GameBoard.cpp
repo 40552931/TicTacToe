@@ -17,6 +17,18 @@ GameBoard::GameBoard() {
 	}
 }
 
+void GameBoard::clear() {
+	// clear the game board
+	for (size_t x = 0; x < board.size(); x++)
+	{
+		for (size_t y = 0; y < board.size(); y++)
+		{
+			// Treat as 2d array, see board.getValueAtPosition below
+			setValueAtPosition(x, y, BLANK);
+		}
+	}
+}
+
 int GameBoard::getValueAtPosition(int x, int y) const {
 	// y * 3 + x allows the vector to be treated, and indexed
 	// as a multidimensional array, which just makes thinking about
