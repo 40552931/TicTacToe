@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameBoard.h"
-#include "../Headers/Message.hpp"
+#include "ServerResponse.h"
 
 #include <tuple>
 

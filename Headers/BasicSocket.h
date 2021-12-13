@@ -7,7 +7,6 @@
 #include <netdb.h>
 #include <string>
 #include <functional>
-#include <cerrno>
 
 class BasicSocket {
 public:

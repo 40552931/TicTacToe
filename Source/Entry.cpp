@@ -1,6 +1,6 @@
-#include <iostream>
-
 #include "../Headers/GameController.h"
+
+#include <iostream>
 
 int main() {
 	GameController game;

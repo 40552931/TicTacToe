@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 87059a20662c33867ba48e4b9034816aecbcb044 40552931 <40552931@live.napier.ac.uk> 1639093715 -0500	clone: from https://github.com/40552931/TicTacToe.git
+87059a20662c33867ba48e4b9034816aecbcb044 23ba0e5636c1efbffe0a74d2751e0f7bce5c8369 Owen T <40552931@live.napier.ac.uk> 1639220027 -0500	commit: Added things like announcing winner correctly, next turn, QOL features. also cleaned up output. still need to refactor server app code
+23ba0e5636c1efbffe0a74d2751e0f7bce5c8369 d6568cf82df84d35c89fe4e3df01b3ea3432db90 Owen T <40552931@live.napier.ac.uk> 1639331139 -0500	commit: Changed request / response object structure, added TODO
+d6568cf82df84d35c89fe4e3df01b3ea3432db90 9a93491a3ddf58a2ad0c7eebd8a77454df42e331 Owen T <40552931@live.napier.ac.uk> 1639359087 -0500	commit: Kind of cleaned up serverapp, but seg fault issues

@@ -9,7 +9,9 @@ public:
 	std::function<void(int)> onSocketClosed;
 	// Constructor
 	Client(int socketId = -1) : BasicSocket(socketId) {}
+	// Connect overload for numeric address (or sockaddr object)
 	void Connect(uint32_t address, uint16_t port, std::function<void()> onConnected);
+	// Connect overload for string address
 	void Connect(std::string host, uint16_t port, std::function<void()> onConnected);
 	int Send(const char* bytes, size_t bytesLength);
 	void Listen();

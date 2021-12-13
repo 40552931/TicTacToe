@@ -1,3 +1,14 @@
+#include "../Headers/ClientApp.h"
+#include "../Headers/Client.h"
+#include "../Headers/ServerResponse.h"
+#include "../Headers/ClientRequest.h"
+#include "../Headers/Messages.h"
+#include "../Headers/GameController.h"
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/bind/bind.hpp>
+
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
@@ -10,14 +21,6 @@
 #include <chrono>
 #include <thread>
 
-#include "../Headers/ClientApp.h"
-#include "../Headers/Client.h"
-#include "../Headers/Message.hpp"
-#include "../Headers/GameController.h"
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/bind/bind.hpp>
-
 using namespace std;
 
 ClientApp::ClientApp() {
@@ -26,42 +29,47 @@ ClientApp::ClientApp() {
 	};
 }
 
-void ClientApp::onMessageReceive(string message) {
-	istringstream ss(message);
-	ServerResponse serverResponseObject;
-	boost::archive::text_iarchive ia(ss);
-	ia >> serverResponseObject;
-	if (serverResponseObject.message == "BEGIN_GAME_RESPONSE") {
-		if (serverResponseObject.responseCode == 0) {
+ServerResponse ClientApp::deserializeServerResponse(const string message) {
+	istringstream stringStream(message);
+	ServerResponse serverResponse;
+	boost::archive::text_iarchive deserializedText(stringStream);
+	deserializedText >> serverResponse;
+	return serverResponse;
+}
+
+void ClientApp::onMessageReceive(const string message) {
+	ServerResponse serverResponse = deserializeServerResponse(message);
+	if (serverResponse.message == Response::BEGIN_GAME) {
+		if (serverResponse.responseCode == 0) {
 			cout << "[*] Response from server: OK - starting game." << endl;
 		} else {
 			cout << "[!] There was an issue starting the game" << endl;
 		}
 	}
-	else if (serverResponseObject.message == "MARKER_CHOICE_RESPONSE") {
-		if (serverResponseObject.responseCode == 0) {
-			string markerString = serverResponseObject.currentTurnPlayerMarker == 1 ? "X" : "O";
+	else if (serverResponse.message == Response::MARKER_CHOICE) {
+		if (serverResponse.responseCode == 0) {
+			string markerString = serverResponse.currentTurnPlayerMarker == 1 ? "X" : "O";
 			cout << "[*] Next turn: " << markerString << endl;
-			cout << serverResponseObject.printableGameBoard << endl;
+			cout << serverResponse.printableGameBoard << endl;
 		} else {
 			cout << "[!] There was an error with your marker choice... " << endl;
 		}
-	} else if (serverResponseObject.message == "MOVE_RESPONSE") {
-		if (serverResponseObject.responseCode == 0) {
+	} else if (serverResponse.message == Response::MOVE) {
+		if (serverResponse.responseCode == 0) {
 			cout << "[*] Move completed" << endl;
-			cout << serverResponseObject.printableGameBoard << endl;
+			cout << serverResponse.printableGameBoard << endl;
 		} else {
 			cout << "[!] That space is already taken, please choose another..." << endl;
 		}
-	} else if (serverResponseObject.message == "WINNER_DETECTED") {
+	} else if (serverResponse.message == Response::WINNER_DETECTED) {
 		// Handle winner
 		cout << "[!] Winner detected, closing connection" << endl;
-		cout << serverResponseObject.printableGameBoard << endl;
-		game.endGame(serverResponseObject.winner);
+		cout << serverResponse.printableGameBoard << endl;
+		game.endGame(serverResponse.winner);
 		client.Close();
 		exit(0);
 	} else {
-		cout << "got a weird one...";
+		cout << "[!] Unusual response detected... contact a developer";
 	}
 }
 
@@ -72,7 +80,7 @@ void ClientApp::askToPlay() {
 		cin >> type;
 	} while (!cin.fail() && type!="y" && type!="n");
 	if (type == "y") {
-		ClientRequest beginGame("BEGIN_GAME_REQUEST");
+		ClientRequest beginGame(Request::BEGIN_GAME);
 		serializeAndSend(beginGame);
 	} else {
 		exit(0);
@@ -87,7 +95,7 @@ void ClientApp::beginConnection() {
 	askToPlay();
 }
 
-void ClientApp::serializeAndSend(ClientRequest sObj) {
+void ClientApp::serializeAndSend(const ClientRequest sObj) {
     std::stringstream messageStream;
     boost::archive::text_oarchive archive(messageStream);
     archive << sObj;
@@ -113,7 +121,7 @@ void ClientApp::beginMarkerChoice() {
     } while (!isValidChoice);
     string markerString = markerChoice == 1 ? "X" : "O";
 	cout << "[*] You have chosen: " << markerString << endl;
-    ClientRequest sObj("MARKER_CHOICE_REQUEST", markerChoice);
+    ClientRequest sObj(Request::MARKER_CHOICE, markerChoice);
     serializeAndSend(sObj);
 }
 
@@ -144,7 +152,7 @@ void ClientApp::beginMoveInputSequence() {
 				valid = true;
 			}
 		} while (!valid);
-		ClientRequest sObj("MOVE_REQUEST", make_tuple(x, y));
+		ClientRequest sObj(Request::MOVE, make_tuple(x, y));
 		serializeAndSend(sObj);
 	}
 }

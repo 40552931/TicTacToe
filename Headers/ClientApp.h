@@ -1,10 +1,11 @@
 #pragma once
 
-#include <iostream>
-
 #include "GameController.h"
 #include "Client.h"
-#include "Message.hpp"
+#include "ServerResponse.h"
+#include "ClientRequest.h"
+
+#include <iostream>
 
 class ClientApp {
 public:
@@ -13,6 +14,7 @@ public:
 	void beginConnection();
 	void beginMarkerChoice();
 	void serializeAndSend(ClientRequest);
+	ServerResponse deserializeServerResponse(std::string);
 	void beginMoveInputSequence();
 	void askToPlay();
 	Client client;

@@ -1,5 +1,6 @@
 #include "../Headers/Client.h"
 #include "../Headers/BasicSocket.h"
+
 #include <cstring>
 #include <functional>
 #include <thread>
@@ -7,11 +8,12 @@
 
 using namespace std;
 
-
 void Client::Connect(string host, uint16_t port, function<void()> onConnected) {
 	// hints is a struct that contains info about socket, such a prototype, socktype, etc
 	struct addrinfo hints;
-	memset(&hints, 0, sizeof(hints)); // segfault if no
+	// reserve some memory, so we don't segfault
+	memset(&hints, 0, sizeof(hints));
+	// set protocol and socket type
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	struct addrinfo *result, *rp;
@@ -80,6 +82,7 @@ void Client::Receive(Client *client) {
 	// receiving message
 	char tempBuf[client->BUFSIZE];
 	int messageLength;
+	// result <0 means there was an error, so only perform while there's not error
 	while ((messageLength = recv(client->sock, tempBuf, client->BUFSIZE, 0)) > 0) {
 		tempBuf[messageLength] = '\0';
 		if (client->onMessageReceived) {
@@ -91,11 +94,12 @@ void Client::Receive(Client *client) {
 	}
 
 	client->Close();
-	//if(socket->onSocketClosed) { socket->onSocketClosed(errno); }
-	//if (socket != nullptr) { delete socket; }
+	/*if(socket->onSocketClosed) { socket->onSocketClosed(errno); }
+	if (socket != nullptr) { delete socket; }*/
 }
 
 void Client::setTimeout(int secs) {
+	// create timeout object
 	struct timeval tv;
 	tv.tv_sec = secs;
 	tv.tv_usec = 0;

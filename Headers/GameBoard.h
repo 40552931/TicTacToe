@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../Headers/ServerResponse.h"
+
 #include <vector>
 #include <string>
-
-#include "../Headers/Message.hpp"
 
 const int BOARD_SIZE = 3;
 const int TIE_INDICATOR = 3;

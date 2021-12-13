@@ -2,7 +2,6 @@
 
 #include "Player.h"
 
-
 #include <tuple>
 
 class ComputerPlayer : public Player {

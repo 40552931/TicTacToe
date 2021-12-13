@@ -1,7 +1,7 @@
+#include "../Headers/Player.h"
+
 #include <iostream>
 #include <tuple>
-
-#include "../Headers/Player.h"
 
 void Player::setMarkers(int marker) {
 	_marker = marker;

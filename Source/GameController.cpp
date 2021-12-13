@@ -1,12 +1,12 @@
+#include "../Headers/GameController.h"
+#include "../Headers/GameBoard.h"
+
 #include <iostream>
 #include <string>
 #include <random>
 #include <chrono>
 #include <thread>
 #include <math.h>
-
-#include "../Headers/GameController.h"
-#include "../Headers/GameBoard.h"
 
 using namespace std;
 

@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Player.h"
-
-#include "../Headers/Message.hpp"
+#include "ServerResponse.h"
 
 #include <tuple>
 

@@ -1,6 +1,6 @@
-#include <iostream>
-
 #include "../Headers/ComputerPlayer.h"
+
+#include <iostream>
 
 using namespace std;
 

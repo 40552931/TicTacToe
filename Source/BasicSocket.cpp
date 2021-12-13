@@ -1,7 +1,7 @@
+#include "../Headers/BasicSocket.h"
+
 #include <iostream>
 #include <string>
-
-#include "../Headers/BasicSocket.h"
 
 using namespace std;
 

@@ -1,10 +1,10 @@
+#include "../Headers/HumanPlayer.h"
+#include "../Headers/ComputerPlayer.h"
+#include "../Headers/ServerResponse.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
-
-#include "../Headers/HumanPlayer.h"
-#include "../Headers/ComputerPlayer.h"
-#include "../Headers/Message.hpp"
 
 using namespace std;
 

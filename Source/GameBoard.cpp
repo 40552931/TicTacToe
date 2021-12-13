@@ -1,7 +1,7 @@
+#include "../Headers/GameBoard.h"
+
 #include <string>
 #include <iostream>
-
-#include "../Headers/GameBoard.h"
 
 using namespace std;
 
