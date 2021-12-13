@@ -12,7 +12,7 @@
 
 #include "../Headers/ClientApp.h"
 #include "../Headers/Client.h"
-#include "../Headers/Message.hpp"
+#include "../Headers/Message.h"
 #include "../Headers/GameController.h"
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>

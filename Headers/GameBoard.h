@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-#include "../Headers/Message.hpp"
+#include "../Headers/Message.h"
 
 const int BOARD_SIZE = 3;
 const int TIE_INDICATOR = 3;

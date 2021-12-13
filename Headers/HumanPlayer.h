@@ -2,7 +2,7 @@
 
 #include "Player.h"
 
-#include "../Headers/Message.hpp"
+#include "../Headers/Message.h"
 
 #include <tuple>
 

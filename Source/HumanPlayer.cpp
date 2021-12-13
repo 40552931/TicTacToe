@@ -4,7 +4,7 @@
 
 #include "../Headers/HumanPlayer.h"
 #include "../Headers/ComputerPlayer.h"
-#include "../Headers/Message.hpp"
+#include "../Headers/Message.h"
 
 using namespace std;
 

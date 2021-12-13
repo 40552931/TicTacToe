@@ -4,7 +4,7 @@
 
 #include "GameController.h"
 #include "Client.h"
-#include "Message.hpp"
+#include "Message.h"
 
 class ClientApp {
 public:
