@@ -21,17 +21,6 @@
 #include <chrono>
 #include <thread>
 
-<<<<<<< HEAD
-=======
-#include "../Headers/ClientApp.h"
-#include "../Headers/Client.h"
-#include "../Headers/Message.h"
-#include "../Headers/GameController.h"
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/bind/bind.hpp>
-
->>>>>>> 9a93491a3ddf58a2ad0c7eebd8a77454df42e331
 using namespace std;
 
 ClientApp::ClientApp() {

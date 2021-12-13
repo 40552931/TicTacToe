@@ -5,11 +5,6 @@
 #include <vector>
 #include <string>
 
-<<<<<<< HEAD
-=======
-#include "../Headers/Message.h"
-
->>>>>>> 9a93491a3ddf58a2ad0c7eebd8a77454df42e331
 const int BOARD_SIZE = 3;
 const int TIE_INDICATOR = 3;
 const std::string BOTTOM_AXIS = "-----1----------2----------3-----\n";
