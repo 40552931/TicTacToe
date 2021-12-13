@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+=======
+#include "../Headers/Server.h"
+
+#include <iostream>
+#include "../Headers/Message.h"
+#include "../Headers/GameController.h"
+#include "../Headers/ServerApp.h"
+>>>>>>> 9a93491a3ddf58a2ad0c7eebd8a77454df42e331
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/bind/bind.hpp>
@@ -69,11 +78,19 @@ server.uponNewCon = [&](Client *client) {
 				serializeAndSend(client, response);
 			}
 		}
+<<<<<<< HEAD
 	};
 	client->onSocketClosed = [client](int errCode = 1) {
 		cout << "[!] Socket closed:" << client->getRemoteAddress() << ":" << client->getRemotePort() << " -> " << errCode << endl;
 		cout << flush;
 	};
+=======
+	};
+	client->onSocketClosed = [client](int errCode = 1) {
+		cout << "[!] Socket closed:" << client->getRemoteAddress() << ":" << client->getRemotePort() << " -> " << errCode << endl;
+		cout << flush;
+	};
+>>>>>>> 9a93491a3ddf58a2ad0c7eebd8a77454df42e331
 };
 
 server.Bind("0.0.0.0", 8888);

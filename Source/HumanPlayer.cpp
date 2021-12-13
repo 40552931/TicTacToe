@@ -6,6 +6,13 @@
 #include <vector>
 #include <string>
 
+<<<<<<< HEAD
+=======
+#include "../Headers/HumanPlayer.h"
+#include "../Headers/ComputerPlayer.h"
+#include "../Headers/Message.h"
+
+>>>>>>> 9a93491a3ddf58a2ad0c7eebd8a77454df42e331
 using namespace std;
 
 Move HumanPlayer::getMove(GameBoard&, int, int) {
