@@ -2,6 +2,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/bind/bind.hpp>
 
+#include "../Headers/Crypt.h"
 #include "../Headers/Server.h"
 #include "../Headers/ServerResponse.h"
 #include "../Headers/ClientRequest.h"
@@ -20,12 +21,13 @@ void ServerApp::serializeAndSend(Client* client, ServerResponse serverResponse) 
 	std::stringstream messageStream;
 	boost::archive::text_oarchive archive(messageStream);
 	archive << serverResponse;
-	string outboundData = messageStream.str();
+	string outboundData = Crypt::decryptEncrypt(messageStream.str());
 	client->Send(outboundData);
 }
 
 ClientRequest ServerApp::deserializeClientRequest(Client* client, string message) {
-	istringstream stringStream(message);
+	string decryptedMessage = Crypt::decryptEncrypt(message);
+	istringstream stringStream(decryptedMessage);
 	ClientRequest clientRequest;
 	boost::archive::text_iarchive serializedText(stringStream);
 	serializedText >> clientRequest;
@@ -47,8 +49,8 @@ server.uponNewCon = [&](Client *client) {
 		else if (clientRequest.message == "MARKER_CHOICE_REQUEST") {
 			// Set up player markers - see begingame
 			int playerMarker = clientRequest.markerChoice;
-			game.initializePlayers(playerMarker);
-			ServerResponse response(0, message="MARKER_CHOICE_RESPONSE", game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker());
+			int tossWin = game.initializePlayers(playerMarker);
+			ServerResponse response(0, message="MARKER_CHOICE_RESPONSE", game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker(), tossWin);
 			serializeAndSend(client, response);
 		} else if (clientRequest.message == "MOVE_REQUEST") {
 			// Handle extracting values, and using get in perform / get move()
@@ -56,14 +58,13 @@ server.uponNewCon = [&](Client *client) {
 			get<1>(game.getCurrentPlayer()->nextMove) = get<1>(clientRequest.position);
 			if (game.canMoveAtPosition(get<0>(clientRequest.position), get<1>(clientRequest.position))) {
 				game.playerGo();
-				if (game.checkVictory()) {
-					int winner = game.checkVictory();
-					game.endGame(winner);
+				if (int winner = game.checkVictory()) {
 					ServerResponse response(0, message="WINNER_DETECTED", winner, game.gameBoard.getBoardString());
     				serializeAndSend(client, response);
 				}
 				ServerResponse response(0, message="MOVE_RESPONSE", game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker());
-				serializeAndSend(client, response);					}
+				serializeAndSend(client, response);					
+			}
 			else {
 				ServerResponse response(1, "MOVE_RESPONSE");
 				serializeAndSend(client, response);

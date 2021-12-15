@@ -10,13 +10,11 @@ enum State { ACTIVE, QUIT };
 class GameController {
 public:
 	void beginGame();
-	void initializePlayers(int);
-	void decideFirstPlayer(int, int);
+	int initializePlayers(int);
+	int decideFirstPlayer(int, int);
 	void setCurrentPlayer(int);
 	Player* getCurrentPlayer() {return currentPlayer; };
-	//GameBoard* getGameBoard() {return gameBoard; };
 	void switchPlayerTurn();
-	void endGame(int);
 	void playerGo();
 	void computerGo();
 	bool canMoveAtPosition(int x, int y);

@@ -27,6 +27,7 @@ public:
 	int responseCode; // Sent with all responses
 	int winner; // Sent with check for winner request
 	int currentTurnPlayerMarker; // Sent with move ok responses
+	int tossWin;
 	template<class Archive>
 	void serialize(Archive& serializationArchive, const unsigned int version) {
 		serializationArchive & message;
@@ -34,12 +35,22 @@ public:
 		serializationArchive & responseCode;
 		serializationArchive & winner;
 		serializationArchive & currentTurnPlayerMarker;
+		serializationArchive & tossWin;
 	}
 
 	// Empty constructor
 	ServerResponse() { };
 
-	// Marker choice & move response overload
+	// Marker choice response overload
+	ServerResponse(int responseCode, std::string message, std::string printableGameBoard, int currentTurnPlayerMarker, int tossWin) {
+		this->responseCode = responseCode;
+		this->message = message;
+		this->printableGameBoard = printableGameBoard;
+		this->currentTurnPlayerMarker = currentTurnPlayerMarker;
+		this->tossWin = tossWin;
+	}
+
+	// Move response overload
 	ServerResponse(int responseCode, std::string message, std::string printableGameBoard, int currentTurnPlayerMarker) {
 		this->responseCode = responseCode;
 		this->message = message;

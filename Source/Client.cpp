@@ -1,4 +1,5 @@
 #include "../Headers/Client.h"
+#include "../Headers/Crypt.h"
 #include "../Headers/BasicSocket.h"
 
 #include <cstring>
@@ -62,8 +63,8 @@ int Client::Send(const char *bytes, size_t bytesLength) {
 	return sent;
 }
 
-int Client::Send(string message) {
-	return this->Send(message.c_str(), message.length());
+int Client::Send(string encryptedMessage) {
+	return this->Send(encryptedMessage.c_str(), encryptedMessage.length());
 }
 
 void Client::Listen() {

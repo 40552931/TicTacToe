@@ -4,6 +4,7 @@
 #include "../Headers/ClientRequest.h"
 #include "../Headers/Messages.h"
 #include "../Headers/GameController.h"
+#include "../Headers/Crypt.h"
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -20,6 +21,7 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
+#include <cmath>
 
 using namespace std;
 
@@ -29,8 +31,17 @@ ClientApp::ClientApp() {
 	};
 }
 
+void ClientApp::serializeAndSend(const ClientRequest sObj) {
+    std::stringstream messageStream;
+    boost::archive::text_oarchive archive(messageStream);
+    archive << sObj;
+    string outboundData = Crypt::decryptEncrypt(messageStream.str());
+    client.Send(outboundData);	
+}
+
 ServerResponse ClientApp::deserializeServerResponse(const string message) {
-	istringstream stringStream(message);
+	string decryptedMessage = Crypt::decryptEncrypt(message);
+	istringstream stringStream(decryptedMessage);
 	ServerResponse serverResponse;
 	boost::archive::text_iarchive deserializedText(stringStream);
 	deserializedText >> serverResponse;
@@ -48,8 +59,8 @@ void ClientApp::onMessageReceive(const string message) {
 	}
 	else if (serverResponse.message == Response::MARKER_CHOICE) {
 		if (serverResponse.responseCode == 0) {
-			string markerString = serverResponse.currentTurnPlayerMarker == 1 ? "X" : "O";
-			cout << "[*] Next turn: " << markerString << endl;
+			string markerString = serverResponse.tossWin == 1 ? "Human" : "Computer";
+			cout << "[*] " << markerString << " Has won the toss and will go first" << endl;
 			cout << serverResponse.printableGameBoard << endl;
 		} else {
 			cout << "[!] There was an error with your marker choice... " << endl;
@@ -65,12 +76,25 @@ void ClientApp::onMessageReceive(const string message) {
 		// Handle winner
 		cout << "[!] Winner detected, closing connection" << endl;
 		cout << serverResponse.printableGameBoard << endl;
-		game.endGame(serverResponse.winner);
+		endGameSequence(serverResponse.winner);
 		client.Close();
 		exit(0);
 	} else {
 		cout << "[!] Unusual response detected... contact a developer";
 	}
+}
+
+void ClientApp::endGameSequence(int winner) {
+	cout << "\n-= Game over =-\n" << endl;
+	// Caused by serilization library bug
+	if (winner > 100)
+		winner = floor(winner/100);
+	if (winner == TIE_INDICATOR) {
+		cout << "[*] Game was a draw: exiting" << endl;
+		return;
+	}
+	string winnerString = winner == this->playerMarker ? "Human" : "Computer";
+	cout << "[*] " << winnerString << " Has won the game!" << endl;
 }
 
 void ClientApp::askToPlay() {
@@ -95,14 +119,6 @@ void ClientApp::beginConnection() {
 	askToPlay();
 }
 
-void ClientApp::serializeAndSend(const ClientRequest sObj) {
-    std::stringstream messageStream;
-    boost::archive::text_oarchive archive(messageStream);
-    archive << sObj;
-    string outboundData = messageStream.str();
-    client.Send(outboundData);	
-}
-
 void ClientApp::beginMarkerChoice() {
 	bool isValidChoice = false;
     int markerChoice;
@@ -119,6 +135,7 @@ void ClientApp::beginMarkerChoice() {
     	else
     		isValidChoice = true;
     } while (!isValidChoice);
+    this->playerMarker = markerChoice;
     string markerString = markerChoice == 1 ? "X" : "O";
 	cout << "[*] You have chosen: " << markerString << endl;
     ClientRequest sObj(Request::MARKER_CHOICE, markerChoice);
@@ -170,24 +187,3 @@ int main() {
     clientApp.client.Close();
     return 0;
 }
-
-/*class ClientApp {
-public:
-	void sendMarkerChoice() {
-	    while (input != "exit")
-	    {
-	    	// Create new Message object with input
-	    	const MarkerChoiceRequest msg(input);
-	    	std::stringstream messageStream;
-	    	boost::archive::text_oarchive archive(messageStream);
-	    	archive << msg;
-	    	string outboundData = messageStream.str();
-	    	client.Send(outboundData);
-	        getline(cin, input);
-	    }
-	}
-
-	void sendMove() {
-
-	}
-};*/

@@ -18,7 +18,6 @@ Move HumanPlayer::getMove(GameBoard&, int, int) {
 
 void HumanPlayer::performMove(GameBoard& board) {
 	Move playerMove = getMove(board, getMarker());
-	cout << "[*] Player moving to (" << get<0>(playerMove.position) << ", " << get<1>(playerMove.position) << ")" << endl;
 	board.humanMoves.push_back(playerMove);
 	int x, y;
 	tie(x, y) = playerMove.position;

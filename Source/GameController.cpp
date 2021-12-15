@@ -10,18 +10,6 @@
 
 using namespace std;
 
-void GameController::endGame(int winner) {
-	cout << "\n-= Game over =-\n" << endl;
-	// Caused by serilization library bug
-	if (winner > 100)
-		winner = floor(winner/100);
-	if (winner == TIE_INDICATOR) {
-		cout << "[*] Game was a draw: exiting" << endl;
-		return;
-	}
-	cout << "[*] " << winner << " Has won the game!" << endl;
-}
-
 int GameController::checkVictory() {
 	// maybe re-write this... bit clunky
 	bool hasWon;
@@ -101,23 +89,23 @@ int GameController::checkVictory() {
 	return TIE_INDICATOR;
 }
 
-void GameController::initializePlayers(int playerMarkerChoice) {
+int GameController::initializePlayers(int playerMarkerChoice) {
 	int playerMarker = playerMarkerChoice;
 	// get opposite of player marker
 	int computerMarker = playerMarker == X ? O : X;
 	currentGameState = ACTIVE;
 	humanPlayer.initialize(playerMarker);
 	computerPlayer.initialize(computerMarker);
-	decideFirstPlayer(playerMarker, computerMarker);
+	int tossWin = decideFirstPlayer(playerMarker, computerMarker);
+	return tossWin;
 }
 
 void GameController::setCurrentPlayer(int currentPlayerMarker) {
 	// Assign currentPlayer to whoever won the toss, also output message because if AI goes first, it takes a while.. 
 	currentPlayerMarker == X ? (currentPlayer = &humanPlayer) : ( currentPlayer = &computerPlayer);
-	cout << "[*] " << currentPlayer->getName() << " has won the toss.. they will go first!" << endl;
 }
 
-void GameController::decideFirstPlayer(int playerMarker, int computerMarker) {
+int GameController::decideFirstPlayer(int playerMarker, int computerMarker) {
 	// Get random number between 1 and 2 (player marker indicator);
 	this_thread::sleep_for(chrono::milliseconds(200));
 	random_device randomDevice;
@@ -127,6 +115,7 @@ void GameController::decideFirstPlayer(int playerMarker, int computerMarker) {
 	setCurrentPlayer(result);
 	if (currentPlayer->getMarker() == computerMarker)
 		computerGo();
+	return result;
 }
 
 bool GameController::canMoveAtPosition(int x, int y) {
