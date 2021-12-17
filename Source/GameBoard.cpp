@@ -93,7 +93,15 @@ void GameBoard::print() {
 }
 
 int GameBoard::checkVictory() {
-	// maybe re-write this... bit clunky
+	/*
+	 * First check the rows for 3 in a row, then 
+	 * columns, then check both diagonals
+	 * return the integer indicative of the
+	 * player who has won the game, if all spots
+	 * are filled, then return a tie indicator (3).
+	 * if no one won, and the game is not a tie,
+	 * return 0
+	*/
 	bool hasWon;
 	int winnerMarker;
 	//row

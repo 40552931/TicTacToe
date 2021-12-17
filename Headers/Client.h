@@ -13,11 +13,13 @@ public:
 	void Connect(uint32_t address, uint16_t port, std::function<void()> onConnected);
 	// Connect overload for string address
 	void Connect(std::string host, uint16_t port, std::function<void()> onConnected);
+	// Send overload for char* bytes send
 	int Send(const char* bytes, size_t bytesLength);
+	// Send overload for sending a std::string
+	int Send(std::string message);
 	void Listen();
 	void setAddressStruct(sockaddr_in);
 	sockaddr_in getAddressStruct() const;
-	int Send(std::string message);
 private:
 	static void Receive(Client*);
 	void setTimeout(int);

@@ -26,15 +26,19 @@
 using namespace std;
 
 ClientApp::ClientApp() {
+	// Define what happens upon message recieve
 	client.onMessageReceived = [&](string message) mutable {
 		onMessageReceive(message);
 	};
 }
 
-void ClientApp::serializeAndSend(const ClientRequest sObj) {
+void ClientApp::serializeAndSend(const ClientRequest clientRequest) {
     std::stringstream messageStream;
+    // Create serialization archive
     boost::archive::text_oarchive archive(messageStream);
-    archive << sObj;
+    // Pack archive with client request object
+    archive << clientRequest;
+    // Encrypt and send
     string outboundData = Crypt::decryptEncrypt(messageStream.str());
     client.Send(outboundData);	
 }
@@ -43,6 +47,7 @@ ServerResponse ClientApp::deserializeServerResponse(const string message) {
 	string decryptedMessage = Crypt::decryptEncrypt(message);
 	istringstream stringStream(decryptedMessage);
 	ServerResponse serverResponse;
+	// Deserialize from archive and pack into response object, reading for reading.
 	boost::archive::text_iarchive deserializedText(stringStream);
 	deserializedText >> serverResponse;
 	return serverResponse;
@@ -88,7 +93,7 @@ void ClientApp::endGameSequence(int winner) {
 	cout << "\n-= Game over =-\n" << endl;
 	// Caused by serilization library bug
 	if (winner > 100)
-		winner = floor(winner/100);
+		winner = floor(winner/100); // Either 0, 1, 2
 	if (winner == TIE_INDICATOR) {
 		cout << "[*] Game was a draw: exiting" << endl;
 		return;

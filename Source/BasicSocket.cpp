@@ -13,6 +13,7 @@ BasicSocket::BasicSocket(int socketId = -1) {
 			cout << "[!] Error creating socket: " << errno << endl;
 	}
 	else {
+		// If successful, assign socket ID to protected basic socket var.
 		this->sock = socketId;
 	}
 }
@@ -26,7 +27,9 @@ string BasicSocket::ipToString(sockaddr_in ipAddressToConvert) {
 }
 
 void BasicSocket::Close() {
-	if (closed) return;
+	// Close socket if open
+	if (closed) 
+		return;
 	closed = true;
 	close(sock);
 	return;

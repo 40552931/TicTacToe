@@ -19,7 +19,7 @@ public:
 		game.gameBoard.setValueAtPosition(move1x, move1y, 1);
 		game.gameBoard.setValueAtPosition(move2x, move2y, 1);
 		game.gameBoard.setValueAtPosition(move3x, move3y, 1);
-		if (game.checkVictory()) {
+		if (game.gameBoard.checkVictory()) {
 			cout << "[*] Winner detected from moves " << move1x << "," << move1y << "     " << move2x << "," << move2y << "     " << move3x << "," << move3y << "     " << endl;
 			wins++;
 			game.gameBoard.clear();

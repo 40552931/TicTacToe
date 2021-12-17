@@ -95,8 +95,10 @@ void Client::Receive(Client *client) {
 	}
 
 	client->Close();
-	/*if(socket->onSocketClosed) { socket->onSocketClosed(errno); }
-	if (socket != nullptr) { delete socket; }*/
+	/*
+	if(socket->onSocketClosed) { socket->onSocketClosed(errno); }
+	if (socket != nullptr) { delete socket; }
+	*/
 }
 
 void Client::setTimeout(int secs) {

@@ -30,7 +30,6 @@ Move ComputerPlayer::getMove(GameBoard& board, int player, int depth) {
 			if (board.getValueAtPosition(x, y) == BLANK) {
 				Move move(x, y);
 				board.setValueAtPosition(x, y, player);
-				// player = otherplayer (human) if player is ai, otherwise ai player
 				move.moveRating = getMove(board, player == getMarker() ? getOtherPlayerMarker() : getMarker(), depth).moveRating;
 				takenMoves.push_back(move);
 				board.setValueAtPosition(x, y, BLANK); // remove the marker from pos

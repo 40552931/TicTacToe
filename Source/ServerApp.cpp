@@ -23,6 +23,7 @@ void ServerApp::serializeAndSend(Client* client, ServerResponse serverResponse) 
 	archive << serverResponse;
 	string outboundData = Crypt::decryptEncrypt(messageStream.str());
 	client->Send(outboundData);
+	cout << "[*] " << serverResponse.message << " => [" << client->getRemoteAddress() << "]:" << client->getRemotePort() << endl;
 }
 
 ClientRequest ServerApp::deserializeClientRequest(Client* client, string message) {
@@ -58,7 +59,7 @@ server.uponNewCon = [&](Client *client) {
 			get<1>(game.getCurrentPlayer()->nextMove) = get<1>(clientRequest.position);
 			if (game.canMoveAtPosition(get<0>(clientRequest.position), get<1>(clientRequest.position))) {
 				game.playerGo();
-				if (int winner = game.checkVictory()) {
+				if (int winner = game.gameBoard.checkVictory()) {
 					ServerResponse response(0, message="WINNER_DETECTED", winner, game.gameBoard.getBoardString());
     				serializeAndSend(client, response);
 				}
