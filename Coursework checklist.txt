@@ -17,19 +17,8 @@ DONE	▪ If during its turn, Computer can block Human from playing a winning mov
 DONE	immediately after, it must block it. 
 
 Additional
-• Game with a GUI (using appropriate library such as GTK+)
 DONE • Multiple players can connect and their games will run in separate threads; they are completely
 DONE independent from one another.
-• Games can be suspended and resumed.
-• Players can connect to the game server remotely using a standard protocol such as telnet, or a
-custom client application, or perhaps through a web-page.
+DONE • Players can connect to the game server remotely using a standard protocol such as telnet, or a
+DONE custom client application, or perhaps through a web-page.
 DONE • Messages between Human and Computer could be encrypted.
-• Other relevant ideas are welcome 
-
-
-
-
-
-Things i want to change
-DONE - Client request / server repsonse objects are awful they need changing
-- clean up serverapp.cpp 

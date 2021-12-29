@@ -179,8 +179,6 @@ void ClientApp::beginMoveInputSequence() {
 	}
 }
 
-
-
 int main() {
 	ClientApp clientApp;
 	clientApp.beginConnection();
@@ -188,7 +186,6 @@ int main() {
 	clientApp.beginMarkerChoice();
 	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	clientApp.beginMoveInputSequence();
-
     clientApp.client.Close();
     return 0;
 }

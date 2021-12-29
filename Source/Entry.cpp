@@ -10,8 +10,8 @@ input and output from stdout
 and console.
 */
 
-int main() {
+/*int main() {
 	GameController game;
 	game.beginGame();
 	return 0;
-}
+}*/
