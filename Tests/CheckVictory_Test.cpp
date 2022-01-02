@@ -14,7 +14,7 @@ public:
 		game.beginGame();
 	}
 
-	int test(int move1x, int move1y, int move2x, int move2y, int move3x, int move3y) {
+	int testWin(int move1x, int move1y, int move2x, int move2y, int move3x, int move3y) {
 		attempts++;
 		game.gameBoard.setValueAtPosition(move1x, move1y, 1);
 		game.gameBoard.setValueAtPosition(move2x, move2y, 1);
@@ -33,32 +33,52 @@ public:
 	void showSummary() {
 		cout << "[*] Out of " << attempts << " attempts, there were " << wins << " wins detected. There should be 8" << endl;;
 	}
+
+	void testWins() {
+		// Left to right diagonal
+		testWin(0, 0, 1, 1, 2, 2);
+		// Right to left diagonal
+		testWin(2, 0, 0, 2, 1, 1);
+		// Left column
+		testWin(0, 0, 0, 1, 0, 2);
+		// Middle column
+		testWin(1, 0, 1, 1, 1, 2);
+		// Right column
+		testWin(2, 0, 2, 1, 2, 2);
+		// Bottom row
+		testWin(0, 0, 1, 0, 2, 0);
+		// Middle row
+		testWin(0, 1, 1, 1, 2, 1);
+		// Top row
+		testWin(0, 2, 1, 2, 2, 2);
+
+		// Some other garbage
+		testWin(0, 1, 2, 1, 2, 0);
+		testWin(0, 0, 0, 1, 2, 1);
+		showSummary();
+	}
+
+	void testDraw() {
+		game.gameBoard.setValueAtPosition(0, 0, 1);
+		game.gameBoard.setValueAtPosition(0, 1, 1);
+		game.gameBoard.setValueAtPosition(0, 2, 2);
+		game.gameBoard.setValueAtPosition(1, 1, 2);
+		game.gameBoard.setValueAtPosition(1, 0, 2);
+		game.gameBoard.setValueAtPosition(1, 2, 1);
+		game.gameBoard.setValueAtPosition(2, 0, 1);
+		game.gameBoard.setValueAtPosition(2, 2, 1);
+		game.gameBoard.setValueAtPosition(2, 1, 2);
+		game.gameBoard.print();
+		int winner = game.gameBoard.checkVictory();
+		if (winner == 3)
+			cout << "Draw detected - succuess" << endl;
+	}
 };
 
 
 int main() {
 	CheckVictory_Test cv;
 	cv.init();
-	// Left to right diagonal
-	cv.test(0, 0, 1, 1, 2, 2);
-	// Right to left diagonal
-	cv.test(2, 0, 0, 2, 1, 1);
-	// Left column
-	cv.test(0, 0, 0, 1, 0, 2);
-	// Middle column
-	cv.test(1, 0, 1, 1, 1, 2);
-	// Right column
-	cv.test(2, 0, 2, 1, 2, 2);
-	// Bottom row
-	cv.test(0, 0, 1, 0, 2, 0);
-	// Middle row
-	cv.test(0, 1, 1, 1, 2, 1);
-	// Top row
-	cv.test(0, 2, 1, 2, 2, 2);
-
-	// Some other garbage
-	cv.test(0, 1, 2, 1, 2, 0);
-	cv.test(0, 0, 0, 1, 2, 1);
-
-	cv.showSummary();
+	//cv.testWins();
+	cv.testDraw();
 }

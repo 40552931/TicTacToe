@@ -8,6 +8,7 @@
 #include "../Headers/ClientRequest.h"
 #include "../Headers/GameController.h"
 #include "../Headers/ServerApp.h"
+#include "../Headers/Messages.h"
 
 #include <string>
 #include <sstream>
@@ -36,38 +37,38 @@ ClientRequest ServerApp::deserializeClientRequest(Client* client, string message
 }
 
 void ServerApp::begin() {
-server.uponNewCon = [&](Client *client) {
-	GameController game;
-	cout << "[!] New client connected: [" << client->getRemoteAddress() << "]" << endl;
-	client->onMessageReceived = [this, game, client](string message) mutable {
-	ClientRequest clientRequest = deserializeClientRequest(client, message);
+	server.uponNewCon = [&](Client *client) {
+		GameController game;
+		cout << "[!] New client connected: [" << client->getRemoteAddress() << "]" << endl;
+		client->onMessageReceived = [this, game, client](string message) mutable {
+		ClientRequest clientRequest = deserializeClientRequest(client, message);
 		cout << "[*] [" << client->getRemoteAddress() << "]:" << client->getRemotePort() << " => " << clientRequest.message << endl;
-		if (clientRequest.message == "BEGIN_GAME_REQUEST") {
+		if (clientRequest.message == Request::BEGIN_GAME) {
 			game.beginGame();
-			ServerResponse response(0, message="BEGIN_GAME_RESPONSE");
+			ServerResponse response(0, message = Response::BEGIN_GAME);
 			serializeAndSend(client, response);
 		}
-		else if (clientRequest.message == "MARKER_CHOICE_REQUEST") {
+		else if (clientRequest.message == Request::MARKER_CHOICE) {
 			// Set up player markers - see begingame
 			int playerMarker = clientRequest.markerChoice;
 			int tossWin = game.initializePlayers(playerMarker);
-			ServerResponse response(0, message="MARKER_CHOICE_RESPONSE", game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker(), tossWin);
+			ServerResponse response(0, message = Response::MARKER_CHOICE, game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker(), tossWin);
 			serializeAndSend(client, response);
-		} else if (clientRequest.message == "MOVE_REQUEST") {
+		} else if (clientRequest.message == Request::MOVE) {
 			// Handle extracting values, and using get in perform / get move()
 			get<0>(game.getCurrentPlayer()->nextMove) = get<0>(clientRequest.position);
 			get<1>(game.getCurrentPlayer()->nextMove) = get<1>(clientRequest.position);
 			if (game.canMoveAtPosition(get<0>(clientRequest.position), get<1>(clientRequest.position))) {
 				game.playerGo();
 				if (int winner = game.gameBoard.checkVictory()) {
-					ServerResponse response(0, message="WINNER_DETECTED", winner, game.gameBoard.getBoardString());
+					ServerResponse response(0, message = Response::WINNER_DETECTED, winner, game.gameBoard.getBoardString());
     				serializeAndSend(client, response);
 				}
-				ServerResponse response(0, message="MOVE_RESPONSE", game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker());
+				ServerResponse response(0, message = Response::MOVE, game.gameBoard.getBoardString(), game.getCurrentPlayer()->getMarker());
 				serializeAndSend(client, response);					
 			}
 			else {
-				ServerResponse response(1, "MOVE_RESPONSE");
+				ServerResponse response(1, Response::MOVE);
 				serializeAndSend(client, response);
 			}
 		}
@@ -94,5 +95,4 @@ int main() {
 	ServerApp server;
 	server.begin();
 	return 0;
-
 }
