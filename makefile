@@ -1,14 +1,14 @@
 SRC_DIR :=./Source
-SRC_FILES := $(filter-out ./Source/Entry.cpp, $(wildcard $(SRC_DIR)/*.cpp))
+SRC_FILES :=$(filter-out ./Source/Entry.cpp, $(wildcard $(SRC_DIR)/*.cpp))
 SVR_ENTRY :=./Source/ServerApp.cpp
 CLT_ENTRY :=./Source/ClientApp.cpp
 
-default: Packages Server Client
-all: Packages Server Client
+default: packages Server Client
+all: packages Server Client
 
-# Install necessary packages for the application, if not already installed
-Packages:
-	[ -z `dpkg -l | grep libboost-serialization-dev` ] && sudo apt install libboost-serialization-dev
+packages:
+		[ -d "`/usr/include/boost/ 2>/dev/null`"] && sudo apt install libboost-serialization-dev || echo "Required packages found"
+.PHONY: packages
 
 Server: $(SVR_ENTRY)
 	g++ $(filter-out ./Source/ClientApp.cpp, $(SRC_FILES)) -o Server -pthread -L/usr/include/boost -lboost_serialization
