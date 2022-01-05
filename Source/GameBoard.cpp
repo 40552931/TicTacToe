@@ -34,12 +34,12 @@ int GameBoard::getValueAtPosition(int x, int y) const {
 	// as a multidimensional array, which just makes thinking about
 	// a game board so much easier (as cartesian co-ordinates)...
 	// same for setValueAtPosition...
-	return board[y * 3 + x];
+	return board[y * BOARD_SIZE + x];
 }
 
 void GameBoard::setValueAtPosition(int x, int y, int markerValue) {
 	//cout << "Setting value at (" << x + 1 << "," << y + 1 << ")" << " by " << markerValue << endl;
-	board[y * 3 + x] = markerValue;
+	board[y * BOARD_SIZE + x] = markerValue;
 }
 
 string GameBoard::getBoardString() {
@@ -73,7 +73,7 @@ void GameBoard::print() {
 	{
 		cout << "---------------------------------" << endl;
 		cout << "|         |" << "|         |" << "|         |" << endl;
-		for (int x = 0; x < 3; x++)
+		for (int x = 0; x < BOARD_SIZE; x++)
 		{
 			switch (getValueAtPosition(x, y)) {
 			case 0:
@@ -105,12 +105,12 @@ int GameBoard::checkVictory() {
 	bool hasWon;
 	int winnerMarker;
 	//row
-	for (int y = 0; y < 3; y++)
+	for (int y = 0; y < BOARD_SIZE; y++)
 	{
 		winnerMarker = getValueAtPosition(0, y);
 		if (winnerMarker != BLANK) {
 			hasWon = true;
-			for (int x = 0; x < 3; x++)
+			for (int x = 0; x < BOARD_SIZE; x++)
 			{
 				if (getValueAtPosition(x, y) != winnerMarker) {
 					hasWon = false;
@@ -123,12 +123,12 @@ int GameBoard::checkVictory() {
 		}
 	}
 	// col
-	for (int x = 0; x < 3; x++)
+	for (int x = 0; x < BOARD_SIZE; x++)
 	{
 		winnerMarker = getValueAtPosition(x, 0);
 		if (winnerMarker != BLANK) {
 			hasWon = true;
-			for (int y = 0; y < 3; y++)
+			for (int y = 0; y < BOARD_SIZE; y++)
 			{
 				if (getValueAtPosition(x, y) != winnerMarker) {
 					hasWon = false;
@@ -144,7 +144,7 @@ int GameBoard::checkVictory() {
 	winnerMarker = getValueAtPosition(0, 0);
 	if (winnerMarker != BLANK) {
 		hasWon = true;
-		for (int xy = 0; xy < 3; xy++) {
+		for (int xy = 0; xy < BOARD_SIZE; xy++) {
 			if (getValueAtPosition(xy, xy) != winnerMarker) {
 				hasWon = false;
 				break;
@@ -169,8 +169,8 @@ int GameBoard::checkVictory() {
 		}
 	}
 
-	for (size_t x = 0; x < 3; x++) {
-		for (size_t y = 0; y < 3; y++)
+	for (size_t x = 0; x < BOARD_SIZE; x++) {
+		for (size_t y = 0; y < BOARD_SIZE; y++)
 		{
 			if (getValueAtPosition(x, y) == BLANK) return BLANK;
 		}

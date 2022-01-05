@@ -38,12 +38,14 @@ ClientRequest ServerApp::deserializeClientRequest(Client* client, string message
 
 void ServerApp::begin() {
 	server.uponNewCon = [&](Client *client) {
-		GameController game;
+		// New connection recieved
+		GameController game; // Create a "game instance"
 		cout << "[!] New client connected: [" << client->getRemoteAddress() << "]" << endl;
 		client->onMessageReceived = [this, game, client](string message) mutable {
-		ClientRequest clientRequest = deserializeClientRequest(client, message);
+		ClientRequest clientRequest = deserializeClientRequest(client, message); // Deserialize the recieved request
 		cout << "[*] [" << client->getRemoteAddress() << "]:" << client->getRemotePort() << " => " << clientRequest.message << endl;
 		if (clientRequest.message == Request::BEGIN_GAME) {
+			// Handle begin game request
 			game.beginGame();
 			ServerResponse response(0, message = Response::BEGIN_GAME);
 			serializeAndSend(client, response);
