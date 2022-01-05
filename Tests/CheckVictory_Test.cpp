@@ -71,7 +71,7 @@ public:
 		game.gameBoard.print();
 		int winner = game.gameBoard.checkVictory();
 		if (winner == 3)
-			cout << "Draw detected - succuess" << endl;
+			cout << "Draw detected - success" << endl;
 	}
 };
 
@@ -79,6 +79,7 @@ public:
 int main() {
 	CheckVictory_Test cv;
 	cv.init();
-	//cv.testWins();
+	cv.testWins();
+	cout << "\n\n\n\n\n" << endl;
 	cv.testDraw();
 }
